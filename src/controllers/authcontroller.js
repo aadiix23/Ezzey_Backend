@@ -1,4 +1,4 @@
-const User = require("../models/user");
+const User = require("../models/Users");
 const bcrypt = require("bcrypt");
 const validateInstitutionEmail = require("../utils/validateInstitutionEmail");
 
@@ -46,3 +46,48 @@ exports.registerUser = async (req, res) => {
     res.status(500).json({ message: "Signup failed", error });
   }
 };
+const jwt = require("jsonwebtoken");
+
+exports.loginUser = async (req, res) => {
+  try {
+    const { email, password } = req.body;
+
+    // Check user exists
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(404).json({ message: "User not found!" });
+    }
+
+    // Compare password
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) {
+      return res.status(401).json({ message: "Invalid password!" });
+    }
+
+    // Create JWT token
+    const token = jwt.sign(
+      {
+        id: user._id,
+        email: user.email,
+        role: user.role
+      },
+      process.env.JWT_SECRET,
+      { expiresIn: "7d" }
+    );
+
+    res.status(200).json({
+      message: "Login successful",
+      token,
+      user: {
+        id: user._id,
+        email: user.email,
+        role: user.role
+      }
+    });
+
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Login failed", error });
+  }
+};
+
