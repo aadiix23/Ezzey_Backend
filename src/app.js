@@ -10,6 +10,7 @@ app.use(express.json());
 
 // Routes
 app.use("/api/auth", authRoutes);
+const erpRoutes = require("./routes/erpRoutes");
 app.use(cookieParser());
-
+app.use("/api/erp", erpRoutes);
 module.exports = app;
