@@ -1,6 +1,9 @@
 const User = require("../models/Users");
 const bcrypt = require("bcrypt");
 const validateInstitutionEmail = require("../utils/validateInstitutionEmail");
+const jwt = require("jsonwebtoken");
+
+// ========================= SIGNUP =========================
 
 exports.registerUser = async (req, res) => {
   try {
@@ -46,7 +49,10 @@ exports.registerUser = async (req, res) => {
     res.status(500).json({ message: "Signup failed", error });
   }
 };
-const jwt = require("jsonwebtoken");
+
+
+
+// ========================= LOGIN =========================
 
 exports.loginUser = async (req, res) => {
   try {
@@ -75,19 +81,26 @@ exports.loginUser = async (req, res) => {
       { expiresIn: "7d" }
     );
 
-    res.status(200).json({
-      message: "Login successful",
-      token,
-      user: {
-        id: user._id,
-        email: user.email,
-        role: user.role
-      }
-    });
+    // Send JWT as HTTP Cookie
+    res
+      .cookie("token", token, {
+        httpOnly: true,
+        secure: true,         // Render is HTTPS
+        sameSite: "none",     // Allow cross-site cookies
+        maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
+      })
+      .status(200)
+      .json({
+        message: "Login successful",
+        user: {
+          id: user._id,
+          email: user.email,
+          role: user.role
+        }
+      });
 
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Login failed", error });
   }
 };
-
