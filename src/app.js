@@ -11,6 +11,8 @@ app.use(express.json());
 // Routes
 app.use("/api/auth", authRoutes);
 const erpRoutes = require("./routes/erpRoutes");
+const dashboardRoutes = require("./routes/dashboardRoutes");
 app.use(cookieParser());
 app.use("/api/erp", erpRoutes);
+app.use("/api/dashboard", dashboardRoutes);
 module.exports = app;

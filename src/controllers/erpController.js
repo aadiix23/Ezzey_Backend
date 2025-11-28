@@ -52,13 +52,18 @@ exports.syncERP = async (req, res) => {
 
 
 // ===================== STEP STATUS =====================
-exports.syncStatus = (req, res) => {
+exports.syncStatus = async (req, res) => {
   return res.json({
-    departments: "Imported ✔",
-    subjects: "Imported ✔",
-    faculty: "Imported ✔",
-    classrooms: "Imported ✔",
-    batches: "Imported ✔",
-    status: "All data synced successfully!"
+    success: true,
+    steps: [
+      { step: "Connecting to ERP", status: "completed" },
+      { step: "Fetching Departments", status: "completed" },
+      { step: "Fetching Subjects", status: "completed" },
+      { step: "Fetching Faculty", status: "completed" },
+      { step: "Fetching Classrooms", status: "completed" },
+      { step: "Fetching Batches", status: "completed" },
+      { step: "Validating Loadset", status: "completed" }
+    ],
+    finalStatus: "ERP Data Sync Completed Successfully"
   });
 };
